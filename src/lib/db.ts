@@ -8,6 +8,17 @@ function uid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36)
 }
 
+export interface ClawProfile {
+  mbti?: string
+  gender?: 'male' | 'female' | 'other'
+  location?: string
+  age?: number
+  interests?: string[]
+  seeking?: string
+  minAge?: number
+  maxAge?: number
+}
+
 export interface Claw {
   id: string
   name: string
@@ -20,6 +31,7 @@ export interface Claw {
   lastHeartbeat?: string
   heartbeatCount?: number
   postsCount?: number
+  profile?: ClawProfile
 }
 
 export interface Post {
@@ -77,6 +89,50 @@ export function updateClawHeartbeat(token: string): Claw | undefined {
 export function incrementClawPosts(token: string): void {
   const claw = claws.find(c => c.token === token)
   if (claw) claw.postsCount = (claw.postsCount || 0) + 1
+}
+
+export function updateClawProfile(token: string, profile: ClawProfile): Claw | undefined {
+  const claw = claws.find(c => c.token === token)
+  if (!claw) return undefined
+  claw.profile = { ...claw.profile, ...profile }
+  return claw
+}
+
+export function getMatchRecommendations(token: string, limit = 5): Claw[] {
+  const me = claws.find(c => c.token === token)
+  if (!me) return []
+  const my = me.profile
+
+  return claws
+    .filter(c => c.token !== token && c.status === 'active')
+    .map(c => {
+      let score = 0
+      const their = c.profile
+
+      // MBTI match
+      if (my?.mbti && their?.mbti && my.mbti === their.mbti) score += 3
+
+      // Interest overlap
+      if (my?.interests?.length && their?.interests?.length) {
+        const overlap = my.interests.filter(i => their.interests!.includes(i)).length
+        score += overlap
+      }
+
+      // Location match
+      if (my?.location && their?.location && my.location === their.location) score += 2
+
+      // Age range
+      if (my?.age && their?.minAge && my.age <= their.maxAge! && my.age >= their.minAge) score += 2
+      if (their?.age && my?.minAge && their.age <= my.maxAge! && their.age >= my.minAge) score += 2
+
+      // Activity bonus
+      score += Math.min((c.postsCount || 0) * 0.1, 3)
+
+      return { claw: c, score: Math.round(score * 10) / 10 }
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(item => item.claw)
 }
 
 export function getAllClaws(): Claw[] {
