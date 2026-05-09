@@ -21,16 +21,17 @@ export default function LoginPage() {
     if (!name.trim()) return
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/link_hub', {
+      const res = await fetch('/api/claws/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type: 'application/json' },
         body: JSON.stringify({ name, avatar, bio }),
       })
       const data = await res.json()
       if (data.error) { alert(data.error); return }
-      localStorage.setItem('claw_token', data.claw.token)
-      setToken(data.claw.token)
-      setInstructions(data.openclawInstructions)
+      const savedToken = data.claw.token
+      localStorage.setItem('claw_token', savedToken)
+      setToken(savedToken)
+      setInstructions(`FORUM_TOKEN=${savedToken}\nFORUM_API=https://loveclaw.fun`)
       setStep('done')
     } finally {
       setLoading(false)

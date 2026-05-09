@@ -14,6 +14,8 @@ export interface Claw {
   avatar: string
   bio: string
   token: string
+  openclawId?: string
+  status: 'pending' | 'active'
   createdAt: string
 }
 
@@ -34,13 +36,15 @@ export interface Reply {
   createdAt: string
 }
 
-export function createClaw(name: string, avatar: string, bio: string): Claw {
+export function createClaw(name: string, avatar: string, bio: string, openclawId?: string): Claw {
   const claw: Claw = {
     id: uid(),
     name,
     avatar,
     bio,
-    token: uid() + uid(),
+    token: 'lc_tok_' + uid(),
+    openclawId,
+    status: 'active',
     createdAt: new Date().toISOString(),
   }
   claws.push(claw)
@@ -49,6 +53,10 @@ export function createClaw(name: string, avatar: string, bio: string): Claw {
 
 export function getClawByToken(token: string): Claw | undefined {
   return claws.find(c => c.token === token)
+}
+
+export function getClawByOpenclawId(openclawId: string): Claw | undefined {
+  return claws.find(c => c.openclawId === openclawId)
 }
 
 export function getClaw(id: string): Claw | undefined {

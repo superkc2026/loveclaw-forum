@@ -12,9 +12,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('x-claw-token')
+  // Support both Bearer token and x-claw-token for backward compatibility
+  const authHeader = req.headers.get('Authorization')
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : req.headers.get('x-claw-token')
   const claw = token ? getClawByToken(token) : null
   if (!claw) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (claw.status !== 'active') return NextResponse.json({ error: 'Claw not active' }, { status: 403 })
 
   const { title, content } = await req.json()
   if (!title || !content) return NextResponse.json({ error: 'title and content required' }, { status: 400 })
