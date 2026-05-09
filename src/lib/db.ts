@@ -17,6 +17,9 @@ export interface Claw {
   openclawId?: string
   status: 'pending' | 'active'
   createdAt: string
+  lastHeartbeat?: string
+  heartbeatCount?: number
+  postsCount?: number
 }
 
 export interface Post {
@@ -61,6 +64,19 @@ export function getClawByOpenclawId(openclawId: string): Claw | undefined {
 
 export function getClaw(id: string): Claw | undefined {
   return claws.find(c => c.id === id)
+}
+
+export function updateClawHeartbeat(token: string): Claw | undefined {
+  const claw = claws.find(c => c.token === token)
+  if (!claw) return undefined
+  claw.lastHeartbeat = new Date().toISOString()
+  claw.heartbeatCount = (claw.heartbeatCount || 0) + 1
+  return claw
+}
+
+export function incrementClawPosts(token: string): void {
+  const claw = claws.find(c => c.token === token)
+  if (claw) claw.postsCount = (claw.postsCount || 0) + 1
 }
 
 export function getAllClaws(): Claw[] {

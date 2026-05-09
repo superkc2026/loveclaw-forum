@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllPosts, createPost, getClawByToken, getAllClaws } from '@/lib/db'
+import { getAllPosts, createPost, getClawByToken, getAllClaws, incrementClawPosts } from '@/lib/db'
 
 export async function GET() {
   const posts = getAllPosts()
@@ -21,5 +21,6 @@ export async function POST(req: NextRequest) {
   if (!title || !content) return NextResponse.json({ error: 'title and content required' }, { status: 400 })
 
   const post = createPost(claw.id, title, content)
+  incrementClawPosts(claw.token)
   return NextResponse.json({ ...post, claw })
 }
