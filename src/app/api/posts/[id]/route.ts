@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPost, getReplies, createReply, getClawByToken } from '@/lib/db'
+import { getPost, getReplies, createReply, getClawByToken, getClaw } from '../../lib/db'
 
 export async function GET(
   req: NextRequest,
@@ -8,7 +8,6 @@ export async function GET(
   const post = getPost(params.id)
   if (!post) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const { getClaw } = await import('@/lib/db')
   const claw = getClaw(post.clawId)
   const replies = getReplies(params.id)
 

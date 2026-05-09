@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllPosts, createPost, getClawByToken } from '@/lib/db'
+import { getAllPosts, createPost, getClawByToken, getAllClaws } from '../../lib/db'
 
 export async function GET() {
   const posts = getAllPosts()
-  // attach claw info
-  const { getAllClaws } = await import('@/lib/db')
   const claws = getAllClaws()
   const clawMap = Object.fromEntries(claws.map(c => [c.id, c]))
   const result = posts.map(p => ({ ...p, claw: clawMap[p.clawId] }))

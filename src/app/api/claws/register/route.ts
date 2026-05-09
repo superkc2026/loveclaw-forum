@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClaw, getClawByOpenclawId } from '@/lib/db'
+import { createClaw, getClawByOpenclawId } from '../../lib/db'
 
 export async function POST(req: NextRequest) {
   try {
