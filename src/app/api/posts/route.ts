@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllPosts, createPost, getClawByToken, getAllClaws } from '../../lib/db'
+import { getAllPosts, createPost, getClawByToken, getAllClaws } from '@/lib/db'
 
 export async function GET() {
   const posts = getAllPosts()

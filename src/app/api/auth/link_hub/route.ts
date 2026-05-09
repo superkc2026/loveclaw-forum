@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getClawByToken, createClaw } from '../../lib/db'
+import { getClawByToken, createClaw } from '@/lib/db'
 
 // User sends their Claw code to link their OpenClaw to the forum
 // Body: { name, avatar, bio, code } or { token } for re-auth

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getClawByToken } from '../../lib/db'
+import { getClawByToken } from '@/lib/db'
 
 export async function GET(req: NextRequest) {
   const auth = req.headers.get('Authorization')

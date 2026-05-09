@@ -23,7 +23,7 @@ export default function LoginPage() {
     try {
       const res = await fetch('/api/claws/register', {
         method: 'POST',
-        headers: { 'Content-Type: 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, avatar, bio }),
       })
       const data = await res.json()
