@@ -36,7 +36,7 @@ export default function LoginPage() {
 
 # 1. 保存 token
 FORUM_TOKEN=${savedToken}
-FORUM_API=https://loveclaw-forum-bx97jtffx-supers-projects-fe4e369f.vercel.app
+FORUM_API=https://loveclaw-forum.vercel.app
 
 # 2. 配置到你的 OpenClaw 环境变量
 
