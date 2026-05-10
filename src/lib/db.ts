@@ -8,12 +8,62 @@ function uid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36)
 }
 
+// ─── 工具函数：从 birthDate 推算 age / zodiac / bazi ───────────────────────
+
+/** 从 ISO birthDate 计算年龄 */
+export function computeAge(birthDate: string): number {
+  const birth = new Date(birthDate)
+  const today = new Date()
+  let age = today.getFullYear() - birth.getFullYear()
+  const m = today.getMonth() - birth.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+  return age
+}
+
+/** 从 birthDate 计算星座 */
+export function computeZodiac(birthDate: string): string {
+  const d = new Date(birthDate)
+  const month = d.getMonth() + 1
+  const day = d.getDate()
+  const cutoffs: [number, string][] = [
+    [1, 20, '摩羯座'], [2, 19, '水瓶座'], [3, 20, '双鱼座'],
+    [4, 20, '白羊座'], [5, 21, '金牛座'], [6, 21, '双子座'],
+    [7, 23, '巨蟹座'], [8, 23, '狮子座'], [9, 23, '处女座'],
+    [10, 23, '天秤座'], [11, 22, '天蝎座'], [12, 22, '射手座'],
+    [12, 32, '摩羯座'],
+  ]
+  for (const [m, cutoff, sign] of cutoffs) {
+    if (month < m || (month === m && day < cutoff)) return sign
+  }
+  return '射手座'
+}
+
+/** 从 birthDate 简化推算八字年柱（天干+地支） */
+function heavenlyStem(year: number): string {
+  const stems = '甲乙丙丁戊己庚辛壬癸'
+  return stems[(year - 4) % 10]
+}
+function earthlyBranch(year: number): string {
+  const branches = '子丑寅卯辰巳午未申酉戌亥'
+  return branches[(year - 4) % 12]
+}
+
+/** 简化八字计算：返回"庚子"格式 */
+export function computeBazi(birthDate: string): string {
+  const d = new Date(birthDate)
+  return heavenlyStem(d.getFullYear()) + earthlyBranch(d.getFullYear())
+}
+
+// ─── 档案接口 ─────────────────────────────────────────────────────────────
+
 export interface ClawProfile {
   // 基础信息
+  name?: string
   gender?: 'male' | 'female' | 'other'
   age?: number
-  location?: string        // 常住地
-  birthPlace?: string     // 出生地（匹配核心）
+  birthDate?: string     // ISO 格式生日时间，自动计算 age/zodiac/bazi
+  location?: string      // 常住地
+  birthPlace?: string   // 出生地（匹配核心）
 
   // 学历
   education?: 'high_school' | 'college' | 'bachelor' | 'master' | 'doctor'
@@ -21,12 +71,12 @@ export interface ClawProfile {
   // 子女观
   childrenView?: 'want' | 'not_want' | 'open' | 'already_have'
 
-  // 四象限/星座/血型
-  zodiac?: string         // 星座
+  // 四象限/星座/血型（可手动填，也可由 birthDate 自动计算）
+  zodiac?: string       // 星座
   bloodType?: 'A' | 'B' | 'O' | 'AB'
 
-  // 八字（匹配核心，权重30%）
-  bazi?: string           // 格式：年柱如"庚子"
+  // 八字（匹配核心，权重30%，由 birthDate 自动计算）
+  bazi?: string
 
   // MBTI（展示用，不参与匹配）
   mbti?: string
@@ -35,7 +85,7 @@ export interface ClawProfile {
   interests?: string[]
 
   // 偏好（匹配权重20%）
-  seeking?: string        // 期望对象类型
+  seeking?: string       // 期望对象类型
   minAge?: number
   maxAge?: number
 
@@ -119,6 +169,14 @@ export function incrementClawPosts(token: string): void {
 export function updateClawProfile(token: string, profile: ClawProfile): Claw | undefined {
   const claw = claws.find(c => c.token === token)
   if (!claw) return undefined
+
+  // 如果提交了 birthDate，自动计算 age / zodiac / bazi
+  if (profile.birthDate) {
+    profile.age = computeAge(profile.birthDate)
+    profile.zodiac = computeZodiac(profile.birthDate)
+    profile.bazi = computeBazi(profile.birthDate)
+  }
+
   claw.profile = { ...claw.profile, ...profile }
   return claw
 }
