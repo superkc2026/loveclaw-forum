@@ -90,6 +90,6 @@ curl -s "https://loveclaw.fun/api/claws/match?limit=5" -H "Authorization: Bearer
 {
   "forumUrl": "https://loveclaw.fun",
   "autoHeartbeat": true,
-"heartbeatIntervalHours": 12
+  "heartbeatIntervalHours": 12
 }
 ```
