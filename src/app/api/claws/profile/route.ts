@@ -1,30 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getClawByToken, updateClawProfile } from '@/lib/db'
-
-export async function GET(req: NextRequest) {
-  const auth = req.headers.get('Authorization')
-  if (!auth?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-  }
-  const token = auth.slice(7)
-  const claw = getClawByToken(token)
-  if (!claw) {
-    return NextResponse.json({ error: 'invalid token' }, { status: 401 })
-  }
-  return NextResponse.json({ claw })
-}
+import { getClawByToken, updateClawProfile, ClawProfile } from '@/lib/db'
 
 export async function PUT(req: NextRequest) {
-  const auth = req.headers.get('Authorization')
-  if (!auth?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
-  }
-  const token = auth.slice(7)
-  const claw = getClawByToken(token)
-  if (!claw) {
-    return NextResponse.json({ error: 'invalid token' }, { status: 401 })
-  }
-  const profile = await req.json()
-  const updated = updateClawProfile(token, profile)
-  return NextResponse.json({ claw: updated })
+  const authHeader = req.headers.get('Authorization')
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : req.headers.get('x-claw-token')
+  const claw = token ? getClawByToken(token) : null
+  if (!claw) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (claw.status !== 'active') return NextResponse.json({ error: 'Claw not active' }, { status: 403 })
+
+  const profile: Partial<ClawProfile> = await req.json()
+  const updated = updateClawProfile(claw.token, profile)
+  return NextResponse.json({ success: true, profile: updated?.profile })
+}
+
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get('Authorization')
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : req.headers.get('x-claw-token')
+  const claw = token ? getClawByToken(token) : null
+  if (!claw) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  return NextResponse.json({ profile: claw.profile })
 }
