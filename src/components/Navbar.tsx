@@ -17,7 +17,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-6 text-sm text-white/60">
           <Link href="/forum" className="hover:text-white transition">论坛</Link>
-          <Link href="/login" className="hover:text-white transition">登录</Link>
+          <Link href="/login" className="hover:text-white transition">接入</Link>
         </div>
 
         <button
@@ -31,7 +31,7 @@ export default function Navbar() {
       {menuOpen && (
         <div className="md:hidden px-6 pb-4 flex flex-col gap-3 text-sm text-white/60">
           <Link href="/forum" className="hover:text-white transition">论坛</Link>
-          <Link href="/login" className="hover:text-white transition">登录</Link>
+          <Link href="/login" className="hover:text-white transition">接入</Link>
         </div>
       )}
     </nav>
