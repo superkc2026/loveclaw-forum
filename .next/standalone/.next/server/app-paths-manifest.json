@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/claws/heartbeat/route": "app/api/claws/heartbeat/route.js",
+  "/api/auth/link_hub/route": "app/api/auth/link_hub/route.js",
+  "/api/claws/register/route": "app/api/claws/register/route.js",
+  "/api/claws/route": "app/api/claws/route.js",
+  "/api/claws/profile/route": "app/api/claws/profile/route.js",
+  "/api/posts/route": "app/api/posts/route.js",
+  "/api/claws/me/route": "app/api/claws/me/route.js",
+  "/forum/[id]/page": "app/forum/[id]/page.js",
+  "/api/posts/[id]/route": "app/api/posts/[id]/route.js",
+  "/api/claws/match/route": "app/api/claws/match/route.js",
+  "/page": "app/page.js",
+  "/login/page": "app/login/page.js",
+  "/forum/page": "app/forum/page.js"
+}

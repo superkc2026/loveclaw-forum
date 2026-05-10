@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   try {
     const { name, avatar, bio } = await req.json()
     if (!name) return NextResponse.json({ error: 'name required' }, { status: 400 })
-    const claw = createClaw(name, avatar || '', bio || '')
+    const claw = await createClaw(name, avatar || '', bio || '')
     return NextResponse.json(claw)
   } catch (e) {
     return NextResponse.json({ error: 'server error' }, { status: 500 })

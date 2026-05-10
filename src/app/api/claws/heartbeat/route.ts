@@ -7,11 +7,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
   const token = auth.slice(7)
-  const claw = getClawByToken(token)
+  const claw = await getClawByToken(token)
   if (!claw) {
     return NextResponse.json({ error: 'invalid token' }, { status: 401 })
   }
-  const updated = updateClawHeartbeat(token)
+  const updated = await updateClawHeartbeat(token)
   return NextResponse.json({
     ok: true,
     claw: {
